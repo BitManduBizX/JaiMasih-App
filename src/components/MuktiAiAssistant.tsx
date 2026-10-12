@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
+import { sendChatMessage } from '../utils/geminiService';
 import {
   Sparkles,
   Send,
@@ -72,41 +73,23 @@ export const MuktiAiAssistant: React.FC<MuktiAiAssistantProps> = ({
     setIsLoading(true);
 
     try {
-      const storedKey = localStorage.getItem('jaimasih_gemini_api_key') || '';
-
-      const res = await fetch('/api/gemini/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(storedKey ? { 'x-gemini-key': storedKey } : {}),
-        },
-        body: JSON.stringify({
-          message: text,
-          history: messages.slice(-6),
-          context: 'User is exploring JaiMasih.org Nepali Christian Digital Archive & Directory',
-          customApiKey: storedKey,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error ${res.status}`);
-      }
-
-      const data = await res.json();
-      const botReply = data.reply || 'माफ गर्नुहोस्, जवाफ प्राप्त गर्न सकिएन।';
+      const { reply, source } = await sendChatMessage(
+        text,
+        messages.slice(-6).map((m) => ({ sender: m.sender, text: m.text })),
+        'User is exploring JaiMasih.org Nepali Christian Digital Archive & Directory'
+      );
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: 'bot',
-        text: botReply,
+        text: reply || 'माफ गर्नुहोस्, जवाफ प्राप्त गर्न सकिएन।',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        source: data.source,
+        source,
       };
 
       setMessages((prev) => [...prev, botMsg]);
     } catch (err: any) {
       console.error('Chat error:', err);
-      // Fallback response so user never has blank screen
       const fallbackMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: 'bot',

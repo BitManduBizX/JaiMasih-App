@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Key, ShieldCheck, ExternalLink, Check, Trash2, X, RefreshCw } from 'lucide-react';
+import { getEffectiveApiKey } from '../utils/geminiService';
 
 interface ApiConsentModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ export const ApiConsentModal: React.FC<ApiConsentModalProps> = ({
   onKeySaved,
 }) => {
   const [apiKey, setApiKey] = useState(() => {
-    return localStorage.getItem('jaimasih_gemini_api_key') || '';
+    return getEffectiveApiKey();
   });
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState(false);
