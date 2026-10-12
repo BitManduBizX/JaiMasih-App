@@ -1,0 +1,6 @@
+{
+  "name": "JaiMasih - Nepali Christian Digital Archive & Directory",
+  "description": "Comprehensive Nepali Christian heritage platform featuring historical archives, church directory, hymn & bhajan streaming, Scripture resources, and the Mukti AI assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
